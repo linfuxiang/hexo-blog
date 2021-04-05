@@ -6,9 +6,11 @@ tags: svga
 
     背景：需要实现跑车进场的动画，有闪电、跑车抖动等效果
 
+<!--more-->
+
 ## 技术选型
 
-分别思考和对比了四种方案，GIF、CSS3 帧动画、Lottie、Svga，权衡下最终选择了Svga
+分别思考和对比了四种方案，GIF、CSS3 帧动画、Lottie、Svga，权衡下最终选择了 Svga
 
 #### GIF
 
@@ -44,7 +46,7 @@ tags: svga
 缺点：
 
 - 可能不支持某些效果
-- 资源包比后面的Svga大一倍左右（json文件+img文件夹）
+- 资源包比后面的 Svga 大一倍左右（json 文件+img 文件夹）
 
 #### Svga
 
