@@ -27,11 +27,10 @@ tags: 性能
 4. 防止事件监听回调执行时间过长，导致原生事件执行延迟了
 
 ```javascript
-// 这段特性检测的方法很巧妙
 let supportsPassive = false;
 try {
   const opts = Object.defineProperty({}, 'passive', {
-    get: function () {
+    get() {
       supportsPassive = true;
     },
   });
@@ -39,13 +38,7 @@ try {
   window.removeEventListener('testPassive', null, opts);
 } catch (e) {}
 
-document.addEventListener(
-  'touchstart',
-  function (e) {
-    // 做了一些操作……
-  },
-  supportsPassive ? { passive: true } : false
-);
+document.addEventListener('touchstart', e => {}, supportsPassive ? { passive: true } : false);
 ```
 
 4. 合理使用防抖和节流函数
