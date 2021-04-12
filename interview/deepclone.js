@@ -1,90 +1,41 @@
-var mapTag = "[object Map]";
-var setTag = "[object Set]";
-var arrayTag = "[object Array]";
-var objectTag = "[object Object]";
-
-var boolTag = "[object Boolean]";
-var dateTag = "[object Date]";
-var errorTag = "[object Error]";
-var numberTag = "[object Number]";
-var regexpTag = "[object RegExp]";
-var stringTag = "[object String]";
-var symbolTag = "[object Symbol]";
-
-function getType(value) {
-    return Object.prototype.toString.call(value);
-}
-
-function isObject(obj) {
-    const type = typeof obj;
-    return obj !== null && (type === "object" || type === "function");
-}
-
-function getInit(target) {
-    const Ctor = target.constructor;
-    return new Ctor();
-}
-
-function cloneReg(targe) {
-    const result = new targe.constructor(targe.source, target.flags);
-    result.lastIndex = targe.lastIndex;
-    return result;
-}
-
-function cloneOtherType(targe, type) {
-    const Ctor = targe.constructor;
-    switch (type) {
-        case boolTag:
-        case numberTag:
-        case stringTag:
-        case errorTag:
-        case dateTag:
-            return new Ctor(targe);
-        case regexpTag:
-            return cloneReg(targe);
-        case symbolTag:
-            return cloneSymbol(targe);
-        default:
-            return null;
+/**
+ * 关键点：
+ * 1.循环引用
+ * 2.函数（定义新函数，通过apply绑定）、正则（通过new RegExp，带上source和flags）、日期（new Date）等类型
+ * 3.数组和对象，克隆一份新的对象出来（Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj))），然后递归
+ * 4.普通类型直接返回
+ */
+let map = new WeakMap();
+function deepClone(obj) {
+  if (obj instanceof Object) {
+    if (map.has(obj)) {
+      return map.get(obj);
     }
-}
-
-function clone(target, map = new WeakMap()) {
-    if (!isObject(target)) return target;
-
-    const type = getType(target);
-    let cloneTarget;
-
-    if (map.get(target)) {
-        return map.get(target);
-    }
-    map.set(target, cloneTarget);
-
-    if (deepTag.includes(type)) {
-        cloneTarget = getInit(target);
+    let newObj;
+    if (obj instanceof Array) {
+      newObj = [];
+    } else if (obj instanceof Function) {
+      newObj = function () {
+        return obj.apply(this, arguments);
+      };
+    } else if (obj instanceof RegExp) {
+      // 拼接正则
+      newobj = new RegExp(obj.source, obj.flags);
+    } else if (obj instanceof Date) {
+      newobj = new Date(obj);
     } else {
-        return cloneOtherType(target, type);
+      newObj = {};
     }
-
-    // 克隆set
-    if (type === setTag) {
-        target.forEach((value) => {
-            cloneTarget.add(clone(value));
-        });
-        return cloneTarget;
+    // 克隆一份对象出来
+    let desc = Object.getOwnPropertyDescriptors(obj);
+    let clone = Object.create(Object.getPrototypeOf(obj), desc);
+    map.set(obj, clone);
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        newObj[key] = deepClone(obj[key]);
+      }
     }
-
-    // 克隆map
-    if (type === mapTag) {
-        target.forEach((value, key) => {
-            cloneTarget.set(key, clone(value));
-        });
-        return cloneTarget;
-    }
-
-    for (let key in target) {
-        cloneTarget[key] = clone(target[key], map);
-    }
-
-    return cloneTarget;
+    return newObj;
+  }
+  return obj;
 }

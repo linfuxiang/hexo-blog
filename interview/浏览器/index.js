@@ -1,0 +1,14 @@
+// window.innerWidth 1340
+// document.documentElement.clientWidth 1323
+// document.documentElement.offsetWidth 1323
+// document.documentElement.scrollWidth 1500
+// document.body.clientWidth 1323
+// document.body.offsetWidth 1323
+// document.body.scrollWidth 1500
+// window.innerHeight 977
+// document.documentElement.clientHeight 960
+// document.documentElement.offsetHeight 2100
+// document.documentElement.scrollHeight 2100
+// document.body.clientHeight 2100
+// document.body.offsetHeight 2100
+// document.body.scrollHeight 2100
