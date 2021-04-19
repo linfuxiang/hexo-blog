@@ -1,7 +1,9 @@
 /**
- * @param {number[]} nums
- * @return {number}
+ * 抢劫，但不能同时抢相邻的两户
+ * 方法：动态规划
+ * 时间复杂度O(n)，空间复杂度O(1)
  */
+
 var rob = function (nums) {
   const len = nums.length;
 
